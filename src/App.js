@@ -234,6 +234,7 @@ function App() {
 
 
 
+  // eslint-disable-next-line no-unused-vars
   function onNewDevice(serial, network) {
     //const  serialDevices = serial;
       //const  networkDevices = network;
@@ -244,6 +245,7 @@ function App() {
       
       console.log(serial);
   }
+  
   async function setUpSerialAPI() {
     console.log("Setting up Web API");
 

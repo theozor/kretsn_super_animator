@@ -24,7 +24,7 @@ För att installera appen lokalt finns en knapp i webbläsaren (oftast itll hög
 1. Ladda ner arduino-projektet från [Länk](link).
 2. Öppna `main.ino` med Arduino IDE.
 3. Välj board utefter den du vill ha. Oftast Wemos Lolin32 Lite.
-4. Ändra `define GENERATIONS = ...` till din generation.
+4. Ändra `define GENERATIONS 0x7E8` till din generation.
 5. Ladda upp programmet och vänta på att det slutförs.
 6. Nu kan du börja använda ***Kretsn Super Animator***!
 7. ???

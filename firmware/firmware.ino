@@ -6,14 +6,10 @@
 
 
 
-#define GENERATION 2023
+#define GENERATION 0x7E8
+#define NUM_LEDS 98
 
 
-#if GENERATION == 2024
-  #define NUM_LEDS 98
-#else
-  #define NUM_LEDS 98
-#endif
 
 /* You only need to format SPIFFS the first time you run a
    test or else use the SPIFFS plugin to create a partition
@@ -24,32 +20,11 @@ byte myMac[6];
 bool isMaster = false; //Endast en kontroll ska ha denna som true annars knasar det.
 //Side note: WiFi protokollet kan göra 2way-com., Denna kod är inte designad för det.
 
+
+#include "generations.h"
+
 //Ange MACs (Ladda över koden på din ESP och kör, ESPn skriver ut MAC-adressen i "Serial Monitor" (öppna via ikonen högst upp till höger))
-uint8_t macs[8][6] = {
-  
-  {0x40,0x22,0xD8,0x08,0x4B,0x50}, //kassör
-  {0x78,0xE3,0x6D,0x1A,0x74,0xCC}, //Företag
-  {0x40,0x22,0xD8,0x07,0x90,0xB0}, //General
-  {0x40,0x22,0xD8,0x08,0x42,0x80}, //Sittning
-  {0x40,0x22,0xD8,0x08,0x47,0xEC}, //Aktivitet
-  {0x40,0x22,0xD8,0x08,0x45,0x84}, //Fadder
-  {0x40,0x22,0xD8,0x07,0x97,0xE4}, //Maskot
-  //EC:94:CB:6B:E2:54
-  {0xEC,0x94,0xCB,0x6B,0xE2,0x54}, //Test
-  //{0x40,0x22,0xD8,0x07,0x9A,0x54}  //Webb
-};
-
-//Ange pins för knappar
-#define key1 13 //Anim 1-4 för varje meny
-#define key2 27
-#define key3 32
-#define key4 19
-#define keyMaster 33 //Master knappen
-#define keyMenu 26 //Meny knappen
-
-#define DATA_RIGHT 12
-#define DATA_LEFT 14
-#define COLOR_ORDER GRB
+uint8_t macs[8][6] = MACS;
 
 //Menyfärger följer en enkel minnesregel, R-G-B, Meny 1 = röd, Meny 2 = grön, Meny 3 = blå, WIFI = gul (endast master)
 const PROGMEM unsigned int menuColors[4]{0x000100,0x010000,0x000001,0x010200};
@@ -243,25 +218,25 @@ bool readAnimationFile(fs::FS &fs, const char * path){
     return true;
 }
 bool writeAnimationFile(fs::FS &fs, const char * path, const uint32_t * message){
-    Serial.printf("Writing file: %s\r\n", path);
+    //Serial.printf("Writing file: %s\r\n", path);
 
     File file = fs.open(path, FILE_WRITE);
     if(!file){
-        Serial.println("- failed to open file for writing");
+        //Serial.println("- failed to open file for writing");
         return false;
     }
     for(uint32_t i = 0; i < (NUM_LEDS + 1)*animationLength; i++) {
       for(uint32_t o = 0; o < 3; o++) {
         byteBuffer[o] = (loadedAnimation[i] & (0xFF << (o*8))) >> (o*8);
-        Serial.print((loadedAnimation[i] & (0xFF << (o*8))) >> (o*8));
+        //Serial.print((loadedAnimation[i] & (0xFF << (o*8))) >> (o*8));
       }
       if(!file.write(byteBuffer, 3)) {
-        Serial.println(" - Write failed!!!");
+        //Serial.println(" - Write failed!!!");
         file.close();
         return false;
       }
     }
-    Serial.println(" - file written!!");
+    //Serial.println(" - file written!!");
     file.close();
     return true;
 }
@@ -383,20 +358,20 @@ void loop(){
     int in = Serial.read();
     if(in == 'w') {
       free(loadedAnimation);
-      Serial.println("Writing to flash");
+      //Serial.println("Writing to flash");
       while(!Serial.available()) {}
       char animationNumber = Serial.read();
       loadedAnimation = NULL;
-      Serial.println("Storage has been freed!");
+      //Serial.println("Storage has been freed!");
       while(!Serial.available()) {}
       animationLength = Serial.readStringUntil(',').toInt();
       loadedAnimation = (uint32_t*) malloc((NUM_LEDS + 1) * animationLength * sizeof(uint32_t));
       if(loadedAnimation == NULL) {
-        Serial.println("realloc() Failed!");
+        //Serial.println("realloc() Failed!");
         return;
       }
-      Serial.print("\nSize:");
-      Serial.println(sizeof(loadedAnimation)/sizeof(loadedAnimation[0]));
+      //Serial.print("\nSize:");
+      //Serial.println(sizeof(loadedAnimation)/sizeof(loadedAnimation[0]));
       for(uint32_t i = 0; i < (NUM_LEDS + 1)*animationLength; i++) {
         while(!Serial.available()) {}
         loadedAnimation[i] = Serial.readStringUntil(',').toInt();
@@ -419,8 +394,8 @@ void loop(){
       while(!Serial.available()) {}
       int animationNumber = Serial.readStringUntil(',').toInt();
       changeAnimation(animationNumber);
-      Serial.print("\nAnimation changed to: ");
-      Serial.println(selectedAnim);
+      //Serial.print("\nAnimation changed to: ");
+      //Serial.println(selectedAnim);
 
     } else if(in == 'f') {
       SPIFFS.format();
@@ -540,7 +515,7 @@ void loop(){
         */
         
       }
-      FastLED.show();
+      //FastLED.show();
       timeLastUpdate = millis();
     }
   }
