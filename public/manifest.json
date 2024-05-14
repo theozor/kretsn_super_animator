@@ -1,6 +1,6 @@
 {
-  "short_name": "React App",
-  "name": "Create React App Sample",
+  "short_name": "Kretsn Animator",
+  "name": "Kretsn Animator 0.1.0",
   "icons": [
     {
       "src": "favicon.ico",
@@ -18,8 +18,19 @@
       "sizes": "512x512"
     }
   ],
-  "start_url": ".",
+  "start_url": "./animator",
   "display": "standalone",
   "theme_color": "#000000",
-  "background_color": "#ffffff"
+  "description": "Animationsprogram för Kretsn Brillz (beta)",
+  "screenshots": [
+    {
+     "src": "./screenshotWide.PNG",
+      "sizes": "1374x807",
+      "type": "image/png",
+      "form_factor": "wide",
+      "label": "Kretsn Animator Beta"
+    }
+  ],
+
+  "background_color": "#121212"
 }

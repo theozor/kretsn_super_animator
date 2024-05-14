@@ -28,6 +28,10 @@
   color: #61dafb;
 }
 
+.sketch-picker {
+  background: rgb(60, 50, 50);
+}
+
 @keyframes App-logo-spin {
   from {
     transform: rotate(0deg);
