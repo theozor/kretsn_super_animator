@@ -10,11 +10,12 @@
  * RGB/HSV -> HSL
  * Mobile support
  * Pipette
+ * Interpolation
  */
 
 
 
-import { AppBar, Box, Button, Container, FormControl, Grid, IconButton, InputAdornment, InputLabel, LinearProgress, ListSubheader, MenuItem, Paper, Select, Slider, Stack, TextField, Toolbar, Tooltip, Typography } from '@mui/material';
+import { AppBar, Box, Button, Checkbox, Container, FormControl, FormControlLabel, FormGroup, Grid, IconButton, InputAdornment, InputLabel, LinearProgress, ListSubheader, MenuItem, Paper, Select, Slider, Stack, TextField, Toolbar, Tooltip, Typography } from '@mui/material';
 import { styled } from '@mui/system';
 import UploadFileIcon from '@mui/icons-material/UploadFile';
 import SaveIcon from '@mui/icons-material/Save';
@@ -71,6 +72,8 @@ function App() {
   const [selectedPort, setSelectedPort] = useState('');
   const [selectedColors, setSelectedColors] = useState({primary: "#ff0000", secondary: "#000000"});
   const [previewColors, setPreviewColors] = useState({primary: "#ff0000", secondary: "#000000"});
+  const [useSymmetry, setUseSymmetry] = useState(true);
+  const [useMirror, setUseMirror] = useState(false);
   const [animationName, setAnimationName] = useState("");
   const [currentFrameTime, setCurrentFrameTimeFE] = useState(16);
   const [selectedFrame, setSelectedFrame] = useState(0);
@@ -642,24 +645,43 @@ function App() {
     }
     return {x: x, y: y};
   }
-  const onMouseMoveCanvas = (event) => {
-    if(isSliderDragging) {
-      return;
-    }
-    let gridPos = getSquareFromMousePos(event);
-    drawGrid();
-    if(event.buttons === 1) {
+  function updateGridFromMouse(gridPos, buttons) {
+    if(buttons === 1) {
       ledData[selectedAnimation][selectedFrame]['grid'][helper.getLedFromXY(gridPos.x, gridPos.y)] = selectedColors.primary;
       setPowerConsumtion(calculateFrameConsumption(selectedFrame));
       drawSquare(gridPos.x, gridPos.y, selectedColors.primary);
       setHasUnsavedChanges(true);
-    } else if(event.buttons === 2) {
+    } else if(buttons === 2) {
       ledData[selectedAnimation][selectedFrame]['grid'][helper.getLedFromXY(gridPos.x, gridPos.y)] = selectedColors.secondary;
       setPowerConsumtion(calculateFrameConsumption(selectedFrame));
       drawSquare(gridPos.x, gridPos.y, selectedColors.secondary);
       setHasUnsavedChanges(true); 
     } else {
       drawSquare(gridPos.x, gridPos.y, selectedColors.primary); 
+    }
+  }
+
+
+  function moveGrid(direction) {
+
+  }
+
+  
+  const onMouseMoveCanvas = (event) => {
+    if(isSliderDragging) {
+      return;
+    }
+    let gridPos = getSquareFromMousePos(event);
+    drawGrid();
+    updateGridFromMouse(gridPos, event.buttons);
+    if(useSymmetry) {
+      if(useMirror) {
+        gridPos.x = generations[selectedGeneration].layout*2 - gridPos.x - 1;
+        updateGridFromMouse(gridPos, event.buttons);
+      } else {
+        gridPos.x = (gridPos.x + generations[selectedGeneration].layout) % (generations[selectedGeneration].layout*2);
+        updateGridFromMouse(gridPos, event.buttons);
+      }
     }
     
   }
@@ -884,6 +906,36 @@ function App() {
                 <SketchPicker width='90%' disableAlpha color={previewColors.secondary} onChange={(color, event) => setPreviewColors({primary: previewColors.primary, secondary: color})} onChangeComplete={onChangeSecondaryColor}/>
                  */}<CustomColorPicker currentPerLed={generations[selectedGeneration].currentPerLed} disableAlpha color={previewColors.primary} onChange={(color, event) => setPreviewColors({primary: color, secondary: previewColors.secondary})} onChangeComplete={onChangePrimaryColor} />
                 <CustomColorPicker currentPerLed={generations[selectedGeneration].currentPerLed} disableAlpha color={previewColors.secondary} onChange={(color, event) => setPreviewColors({primary: previewColors.primary, secondary: color})} onChangeComplete={onChangeSecondaryColor} />
+                 <Grid container>
+                  <Grid item md={12} sx={{}}>
+                    <FormGroup>
+                      <FormControlLabel 
+                        control={
+                          <Checkbox checked={useSymmetry} onClick={(event) => {setUseSymmetry(event.target.checked)}} />
+                        } 
+                        label="Symmetri" 
+                      />
+                      <FormControlLabel 
+                        control={
+                          <Checkbox checked={useMirror} onClick={(event) => {setUseMirror(event.target.checked)}} disabled={!useSymmetry} />
+                        } 
+                        label="Spegling" 
+                      />
+                    </FormGroup>
+                  </Grid>
+                  <Grid item md={12} sx={{}}>
+                    <Button onClick={() => {copyFrame()}} variant="contained">U</Button>
+                  </Grid>
+                  <Grid item md={6} sx={{}}>
+                    <Button variant="contained" onClick={() => {removeFrame()}}>V</Button>
+                  </Grid>
+                  <Grid item md={6} sx={{}}>
+                    <Button onClick={() => {copyFrame()}} variant="contained">H</Button>
+                  </Grid>
+                  <Grid item md={12} sx={{}}>
+                    <Button variant="contained" onClick={() => {removeFrame()}}>N</Button>
+                  </Grid>
+                 </Grid>
               </Stack>
             </Paper>
           </Grid>

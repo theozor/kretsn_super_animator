@@ -13,6 +13,7 @@ Kretsn Super Animator är skapat för att fungera på alla plattformar. Utveckli
 - [ ] Uppladning av animationer över luften
 - [ ] Animeringsverktyg så som Spegling/Symmetri, förflyttning, pipettverktyg m.m
 - [ ] Stöd för telefoner och surfplattor
+- [ ] Interpolation mellan bilder
 ## Installation
 > [!IMPORTANT]
 > Applikationen kan öppnas i alla webbläsare med begränsad funktionalitet. 
