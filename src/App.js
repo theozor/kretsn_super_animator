@@ -11,6 +11,7 @@
  * Mobile support
  * Pipette
  * Interpolation
+ * Help
  */
 
 
@@ -663,7 +664,48 @@ function App() {
 
 
   function moveGrid(direction) {
-
+    let num_leds = {x: generations[selectedGeneration].layout*2, y: generations[selectedGeneration].layout};
+    let temp = [];
+    switch(direction) {
+      case 'U':
+      case 'up':
+        for(let y = 0; y < num_leds.y; y++) {
+          for(let x = 0; x < num_leds.x; x++) { 
+            temp[helper.getLedFromXY(x, y)] = ledData[selectedAnimation][selectedFrame]['grid'][helper.getLedFromXY(x, helper.mod(y+1, num_leds.y))];
+          }
+        }
+        break;
+      case 'V':
+      case 'left':
+        for(let y = 0; y < num_leds.y; y++) {
+          for(let x = 0; x < num_leds.x; x++) { 
+            temp[helper.getLedFromXY(x, y)] = ledData[selectedAnimation][selectedFrame]['grid'][helper.getLedFromXY(helper.mod(x+1, num_leds.x), y)];
+          }
+        }
+        break;
+      case 'H':
+      case 'right':
+        for(let y = 0; y < num_leds.y; y++) {
+          for(let x = 0; x < num_leds.x; x++) { 
+            temp[helper.getLedFromXY(x, y)] = ledData[selectedAnimation][selectedFrame]['grid'][helper.getLedFromXY(helper.mod(x-1, num_leds.x), y)];
+          }
+        }
+        break;
+      case 'N':
+      case 'down':
+        for(let y = 0; y < num_leds.y; y++) {
+          for(let x = 0; x < num_leds.x; x++) { 
+            temp[helper.getLedFromXY(x, helper.mod(y+1, num_leds.y))] = ledData[selectedAnimation][selectedFrame]['grid'][helper.getLedFromXY(x, y)];
+          }
+        }
+        break;
+      default:
+        return;
+    }
+    for(let i = 0; i < num_leds.x*num_leds.y; i++) {
+      ledData[selectedAnimation][selectedFrame]['grid'][i] = temp[i];
+    }
+    drawGrid(selectedAnimation);
   }
 
   
@@ -924,16 +966,16 @@ function App() {
                     </FormGroup>
                   </Grid>
                   <Grid item md={12} sx={{}}>
-                    <Button onClick={() => {copyFrame()}} variant="contained">U</Button>
+                    <Button onClick={() => {moveGrid('U')}} variant="contained">U</Button>
                   </Grid>
                   <Grid item md={6} sx={{}}>
-                    <Button variant="contained" onClick={() => {removeFrame()}}>V</Button>
+                    <Button variant="contained" onClick={() => {moveGrid('V')}}>V</Button>
                   </Grid>
                   <Grid item md={6} sx={{}}>
-                    <Button onClick={() => {copyFrame()}} variant="contained">H</Button>
+                    <Button onClick={() => {moveGrid('H')}} variant="contained">H</Button>
                   </Grid>
                   <Grid item md={12} sx={{}}>
-                    <Button variant="contained" onClick={() => {removeFrame()}}>N</Button>
+                    <Button variant="contained" onClick={() => {moveGrid('N')}}>N</Button>
                   </Grid>
                  </Grid>
               </Stack>
