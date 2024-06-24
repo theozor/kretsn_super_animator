@@ -22,22 +22,26 @@ export function getLedFromXY(x,y) {
     //return x + y*generations[selectedGeneration].layout*2;
     let c = x;
     let r = y
-    let led_num = (r) * 7;
+    let led_num = mod(r, 7) * 7;
     if (c < 7) {
-        if (r % 2 === 1) {
-            led_num += c % 7;
+        if (mod(r, 2) === 1) {
+            led_num += mod(c, 7);
         } else {
-            led_num += 6 - (c % 7);
+            led_num += 6 - mod(c, 7);
         }
     } else {
-        if (r % 2 === 0) {
-            led_num += c % 7;
+        if (mod(r, 2) === 0) {
+            led_num += mod(c, 7);
         } else {
-            led_num += 6 - (c % 7);
+            led_num += 6 - mod(c, 7);
         }
         led_num += 49;
     }
     return led_num;
+}
+
+export function mod(n, m) {
+    return ((n % m) + m) % m;
 }
 
 
