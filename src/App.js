@@ -14,7 +14,7 @@
 
 
 
-import { AppBar, Box, Button, Checkbox, Container, FormControl, FormControlLabel, FormGroup, Grid, IconButton, InputAdornment, InputLabel, LinearProgress, ListSubheader, MenuItem, Paper, Select, Slider, Stack, TextField, Toolbar, Tooltip, Typography } from '@mui/material';
+import { AppBar, Box, Button, Container, FormControl, FormControlLabel, FormGroup, Grid, IconButton, InputAdornment, InputLabel, LinearProgress, ListSubheader, MenuItem, Paper, Select, Slider, Stack, Switch, TextField, Toolbar, Tooltip, Typography } from '@mui/material';
 import { styled } from '@mui/system';
 import UploadFileIcon from '@mui/icons-material/UploadFile';
 import SaveIcon from '@mui/icons-material/Save';
@@ -775,6 +775,7 @@ function App() {
     ctx.fillRect(x*squareSize + squareGridLineWidth, y*squareSize + squareGridLineWidth, squareSize - squareGridLineWidth*2, squareSize - squareGridLineWidth*2);
   }
 
+
   
 
   return (
@@ -931,7 +932,7 @@ function App() {
               </Paper>
             </Grid>
           </Grid>
-          <Grid item md={8}>
+          <Grid item md={6}>
             <Paper sx={{ padding: 2}}>
               {/* <div style={{position: 'relative'}}>
                 <BrillzIcon style={{position: 'absolute', top: -squareSize/4, left: squareSize*2}} width={squareSize*18.5} height={squareSize*8} onMouseMove={onMouseMoveCanvas} onMouseDown={onMouseMoveCanvas} onMouseLeave={onMouseLeaveCanvas}/>
@@ -946,40 +947,11 @@ function App() {
                 <SketchPicker width='90%' disableAlpha color={previewColors.secondary} onChange={(color, event) => setPreviewColors({primary: previewColors.primary, secondary: color})} onChangeComplete={onChangeSecondaryColor}/>
                  */}<CustomColorPicker currentPerLed={generations[selectedGeneration].currentPerLed} disableAlpha color={previewColors.primary} onChange={(color, event) => setPreviewColors({primary: color, secondary: previewColors.secondary})} onChangeComplete={onChangePrimaryColor} />
                 <CustomColorPicker currentPerLed={generations[selectedGeneration].currentPerLed} disableAlpha color={previewColors.secondary} onChange={(color, event) => setPreviewColors({primary: previewColors.primary, secondary: color})} onChangeComplete={onChangeSecondaryColor} />
-                 <Grid container>
-                  <Grid item md={12} sx={{}}>
-                    <FormGroup>
-                      <FormControlLabel 
-                        control={
-                          <Checkbox checked={useSymmetry} onClick={(event) => {setUseSymmetry(event.target.checked)}} />
-                        } 
-                        label="Symmetri" 
-                      />
-                      <FormControlLabel 
-                        control={
-                          <Checkbox checked={useMirror} onClick={(event) => {setUseMirror(event.target.checked)}} disabled={!useSymmetry} />
-                        } 
-                        label="Spegling" 
-                      />
-                    </FormGroup>
-                  </Grid>
-                  <Grid item md={12} sx={{}}>
-                    <Button onClick={() => {moveGrid('U')}} variant="contained">U</Button>
-                  </Grid>
-                  <Grid item md={6} sx={{}}>
-                    <Button variant="contained" onClick={() => {moveGrid('V')}}>V</Button>
-                  </Grid>
-                  <Grid item md={6} sx={{}}>
-                    <Button onClick={() => {moveGrid('H')}} variant="contained">H</Button>
-                  </Grid>
-                  <Grid item md={12} sx={{}}>
-                    <Button variant="contained" onClick={() => {moveGrid('N')}}>N</Button>
-                  </Grid>
-                 </Grid>
+                 
               </Stack>
             </Paper>
           </Grid>
-          <Grid item md={8}>
+          <Grid item md={6}>
             <Paper>
             <Grid container>
               <Grid item md={4} sx={{display: 'flex', alignItems: 'center', justifyContent: 'space-around', paddingLeft: 4}}>
@@ -1004,6 +976,38 @@ function App() {
             </Grid>
             </Paper>
           </Grid>
+          <Grid item  md={4}>
+            <Grid container>
+              <Grid item md={12} sx={{}}>
+                <FormGroup>
+                  <FormControlLabel 
+                    control={
+                      <Switch checked={useSymmetry} onClick={(event) => {setUseSymmetry(event.target.checked)}} />
+                    } 
+                    label="Symmetri" 
+                  />
+                  <FormControlLabel 
+                    control={
+                      <Switch checked={useMirror} onClick={(event) => {setUseMirror(event.target.checked)}} disabled={!useSymmetry} />
+                    } 
+                    label="Spegling" 
+                  />
+                </FormGroup>
+              </Grid>
+              <Grid item md={12} sx={{}}>
+                <Button onClick={() => {moveGrid('U')}} variant="contained">U</Button>
+              </Grid>
+              <Grid item md={6} sx={{}}>
+                <Button variant="contained" onClick={() => {moveGrid('V')}}>V</Button>
+              </Grid>
+              <Grid item md={6} sx={{}}>
+                <Button onClick={() => {moveGrid('H')}} variant="contained">H</Button>
+              </Grid>
+              <Grid item md={12} sx={{}}>
+                <Button variant="contained" onClick={() => {moveGrid('N')}}>N</Button>
+              </Grid>
+              </Grid>
+           </Grid>
         </Grid>
         
       </div>

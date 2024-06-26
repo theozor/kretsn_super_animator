@@ -1,5 +1,5 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import { Box, LinearProgress, Slider, Typography } from '@mui/material';
+import { Box, FormControlLabel, FormGroup, LinearProgress, Slider, Switch, Typography } from '@mui/material';
 import React, { useEffect, useState } from 'react'
 import { styled } from '@mui/system';
 import { linearProgressClasses } from '@mui/material/LinearProgress';
@@ -57,6 +57,7 @@ export const MyPicker = ( props ) => {
       position: 'relative',
       marginBottom: 10,
       width: width,
+      //backgroundColor: ''
     },
     input: {
       height: 40,
@@ -104,7 +105,6 @@ export const MyPicker = ( props ) => {
     }
   }
 
-  
 
   function limitRGB(rgbcolor, limit) {
     let clength = Math.sqrt(Math.pow(rgbcolor.r, 2) + Math.pow(rgbcolor.g, 2) + Math.pow(rgbcolor.b, 2));
@@ -197,16 +197,13 @@ export const MyPicker = ( props ) => {
         <FastLinearProgress sx={{width: 150, height: 24}}  variant='determinate' value={Math.round((calculateRGBConsumption(props.rgb, props.currentPerLed)/props.currentPerLed)/0.03)}></FastLinearProgress>
         <Typography width={160} variant='body2' sx={{position: "absolute", width: "6ch", top: "50%", left: "50%", transform: "translate(-50%, -50%)", backgroundColor: "#121212CF"}}>{Math.round((calculateRGBConsumption(props.rgb, props.currentPerLed))*1000)} mA</Typography>
       </Box>
+
       <div style={ styles.hue }>
         <Hue hsl={ props.hsl } onChange={ props.onChange } />
       </div>
-      <EditableInput
-        style={{ input: styles.input }}
-        value={ props.hex }
-        onChange={ handleChange }
-      />
-      <div style={{display: "flex", alignItems: 'center', justifyContent: 'space-around'}}>
-      <Typography variant='body2' sx={{width: "11ch", marginRight: "1ch"}}>Styrka</Typography>
+      
+      <div style={{display: "flex", alignItems: 'center', justifyContent: 'flex-start', paddingRight: '1ch'}}>
+      <Typography variant='body2' sx={{marginRight: "2ch"}}>Styrka</Typography>
         <ColorSlider min={0} max={1} step={0.01} value={ colorLimit }
           onChange={(event, newVal) => {setColorLimit(newVal)}}
           valueLabelDisplay='auto'
@@ -214,13 +211,10 @@ export const MyPicker = ( props ) => {
         />
       </div>
       
-      <div style={{display: "flex", alignItems: 'center', justifyContent: 'space-around'}}>
-        <Typography variant='body2' sx={{width: "11ch", marginRight: "1ch"}}>Mättnad</Typography>
-        <ColorSlider min={0} max={1} step={0.01} value={ props.hsl.s }
-          onChange={(event, newVal) => {handleChange({s: newVal}, event)}}
-          valueLabelDisplay='auto'
-          valueLabelFormat={(number) => {return Math.round(number*100)}}
-        />
+      <div style={{display: "flex", alignItems: 'center', justifyContent: 'flex-start'}}>
+        <FormGroup>
+          <FormControlLabel control={<Switch defaultChecked />} label="Gråskala" labelPlacement="start"   />
+        </FormGroup>
       </div>
       <div style={{display: "flex"}}>
         <EditableInput
@@ -248,7 +242,6 @@ export const MyPicker = ( props ) => {
           dragMax="255"
         />
       </div>
-      <div style={ styles.swatch } />
     </div>
   )
 }
