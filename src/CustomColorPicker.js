@@ -5,6 +5,7 @@ import { styled } from '@mui/system';
 import { linearProgressClasses } from '@mui/material/LinearProgress';
 import { CustomPicker } from 'react-color'
 import { EditableInput, Hue } from 'react-color/lib/components/common'
+import HueSelect from './HueSelect';
 const ColorSlider = styled(Slider)(({ theme }) => ({
   color: theme.palette.mode === 'dark' ? '#0a84ff' : '#007bff',
   height: 5,
@@ -40,6 +41,7 @@ const ColorSlider = styled(Slider)(({ theme }) => ({
 }));
 export const MyPicker = ( props ) => {
   const [colorLimit, setColorLimit] = useState(1.0);
+  const [isGrayScale, setIsGrayScale] = useState(false);
   const width = 150;
   const FastLinearProgress = styled(LinearProgress)(({ theme }) => ({
     [`&.${linearProgressClasses.colorPrimary}`]: {
@@ -105,7 +107,46 @@ export const MyPicker = ( props ) => {
     }
   }
 
+  function hslToRgb(h, s, l) {
+    let r, g, b;
+  
+    if (s === 0) {
+      r = g = b = l; // achromatic
+    } else {
+      const q = l < 0.5 ? l * (1 + s) : l + s - l * s;
+      const p = 2 * l - q;
+      r = hueToRgb(p, q, h + 1/3);
+      g = hueToRgb(p, q, h);
+      b = hueToRgb(p, q, h - 1/3);
+    }
+  
+    return [Math.round(r * 255), Math.round(g * 255), Math.round(b * 255)];
+  }
+  
+  function hueToRgb(p, q, t) {
+    if (t < 0) t += 1;
+    if (t > 1) t -= 1;
+    if (t < 1/6) return p + (q - p) * 6 * t;
+    if (t < 1/2) return q;
+    if (t < 2/3) return p + (q - p) * (2/3 - t) * 6;
+    return p;
+  }
 
+
+  function limitRGB(rgbcolor, limit) {
+    let clength = Math.sqrt(Math.pow(rgbcolor.r, 2) + Math.pow(rgbcolor.g, 2) + Math.pow(rgbcolor.b, 2));
+    let nR = rgbcolor.r/clength;
+    let nG = rgbcolor.g/clength;
+    let nB = rgbcolor.b/clength;
+    return {r: nR * limit, g: nG * limit, b: nB * limit, a: props.rgb.a, source: 'rgb'};
+  }
+
+  function limitHSL(hsvcolor, limit) {
+    let rgb = hslToRgb(hsvcolor.h, hsvcolor.s, hsvcolor.l);
+    return limitRGB({r: rgb[0], g: rgb[1], b: rgb[2]}, limit);
+  }
+
+/*
   function limitRGB(rgbcolor, limit) {
     let clength = Math.sqrt(Math.pow(rgbcolor.r, 2) + Math.pow(rgbcolor.g, 2) + Math.pow(rgbcolor.b, 2));
     let nR = rgbcolor.r/clength;
@@ -114,8 +155,9 @@ export const MyPicker = ( props ) => {
     let newLength = Math.sqrt(Math.pow(255, 2)*3) * limit;
     return {r: nR * newLength, g: nG * newLength, b: nB * newLength, a: props.rgb.a, source: 'rgb'};
   }
-
+*/
   const handleChange = (data, e) => {
+    console.log(data)
     if (data.hex) {
       props.color.isValidHex(data.hex) && props.onChange({
         hex: data.hex,
@@ -128,7 +170,7 @@ export const MyPicker = ( props ) => {
         b: data.b || props.rgb.b,
         a: props.rgb.a,
         source: 'rgb',
-      }, colorLimit), e)
+      }, colorLimit*255), e)
     } else if (data.a) {
       if (data.a < 0) {
         data.a = 0
@@ -159,7 +201,8 @@ export const MyPicker = ( props ) => {
         a: props.hsl.a,
         source: 'rgb',
       }, e)
-    } else if (data.s) {
+    } else if (data.hasOwnProperty('s')) {
+      console.log("succes");
       if (data.s < 0) {
         data.s = 0
       } else if (data.s> 1) {
@@ -199,9 +242,11 @@ export const MyPicker = ( props ) => {
       </Box>
 
       <div style={ styles.hue }>
-        <Hue hsl={ props.hsl } onChange={ props.onChange } />
+        <Hue hsl={ props.hsl } onChange={(data, e) => {limitHSL(data, colorLimit)}} />
       </div>
-      
+      <div style={ styles.hue }>
+        <HueSelect hsl={ props.hsl } onChange={ props.onChange } />
+      </div>
       <div style={{display: "flex", alignItems: 'center', justifyContent: 'flex-start', paddingRight: '1ch'}}>
       <Typography variant='body2' sx={{marginRight: "2ch"}}>Styrka</Typography>
         <ColorSlider min={0} max={1} step={0.01} value={ colorLimit }
@@ -213,7 +258,7 @@ export const MyPicker = ( props ) => {
       
       <div style={{display: "flex", alignItems: 'center', justifyContent: 'flex-start'}}>
         <FormGroup>
-          <FormControlLabel control={<Switch defaultChecked />} label="Gråskala" labelPlacement="start"   />
+          <FormControlLabel control={<Switch checked={isGrayScale} onChange={(event) => {setIsGrayScale(event.target.checked); handleChange({s: event.target.checked ? 0 : 1})}} />} label="Gråskala" labelPlacement="start"   />
         </FormGroup>
       </div>
       <div style={{display: "flex"}}>
